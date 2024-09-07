@@ -1,6 +1,6 @@
 import { Search, X } from 'lucide-react';
-import { Input } from './input';
 import { useEffect, useState } from 'react';
+import { Input } from './input';
 
 export default function DebouncedInput({
     value: initialValue,
