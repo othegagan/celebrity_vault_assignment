@@ -8,4 +8,6 @@ export interface Celebrity {
     picture: string;
     country: string;
     description: string;
+    age?: number;
+    fullName: string;
 }

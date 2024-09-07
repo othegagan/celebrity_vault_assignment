@@ -1,20 +1,27 @@
 'use client';
 
-import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from './ui/button';
+import { deleteCelebrity } from '@/server/celebrities';
 import { Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from './ui/button';
 
 export default function DeleteForm({ id, fullName }: { id: number; fullName: string }) {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-    const handleDelete = (id: number) => {
+    const openDeleteDialog = () => {
         setDeleteDialogOpen(true);
+    };
+
+    const handleDelete = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const response = deleteCelebrity(id);
+        // setDeleteDialogOpen(false);
     };
 
     return (
         <>
-            <Button onClick={() => handleDelete(id)} variant='outline' tooltip='Delete Celebrity'>
+            <Button onClick={openDeleteDialog} variant='outline' tooltip='Delete Celebrity'>
                 <Trash2 className='size-5' />
             </Button>
 
@@ -24,12 +31,12 @@ export default function DeleteForm({ id, fullName }: { id: number; fullName: str
                         <DialogTitle>Are you sure you want to delete?</DialogTitle>
                         <DialogDescription>This will delete {fullName} celebrity from the list.</DialogDescription>
                     </DialogHeader>
-                    <DialogFooter>
+                    <DialogFooter className='flex justify-end gap-4 items-center'>
                         <Button onClick={() => setDeleteDialogOpen(false)} variant='outline'>
                             Cancel
                         </Button>
 
-                        <form>
+                        <form onSubmit={handleDelete}>
                             <Button type='submit' variant='destructive'>
                                 Delete
                             </Button>
