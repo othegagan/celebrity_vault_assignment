@@ -12,7 +12,7 @@
                 "noExplicitAny": "off",
                 "noDoubleEquals": "info",
                 "noArrayIndexKey": "off",
-                "noConsoleLog": "error"
+                "noConsoleLog": "warn"
             },
             "complexity": {
                 "noForEach": "off",

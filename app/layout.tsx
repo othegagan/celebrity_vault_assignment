@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import '@/styles/globals.css';
 import { Inter } from 'next/font/google';
+import Navbar from '@/components/Navbar';
+import { Providers } from '@/providers/Providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -9,11 +11,6 @@ export const metadata: Metadata = {
     description: "Secure celebrity information management system for the world's most discerning hackers.",
     keywords: ['celebrity', 'management', 'security', 'privacy', 'hacker', 'information'],
     authors: [{ name: 'Anonymous Hacker' }],
-    viewport: {
-        width: 'device-width',
-        initialScale: 1,
-        maximumScale: 1
-    },
     icons: {
         icon: '/favicon.ico',
         apple: '/apple-icon.png'
@@ -27,7 +24,12 @@ export default function RootLayout({
 }>) {
     return (
         <html lang='en'>
-            <body className={`min-w-[340px] bg-background ${inter.className}`}> {children}</body>
+            <body className={`min-w-[340px] bg-background ${inter.className}`}>
+                <Providers>
+                    <Navbar />
+                    {children}
+                </Providers>
+            </body>
         </html>
     );
 }
