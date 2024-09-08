@@ -9,29 +9,43 @@ import { genderOptions } from '@/constants';
 import { useEditCelebrity } from '@/hooks/useFetchCelebrities';
 import { calculateAge } from '@/lib/helpers';
 import { Celebrity } from '@/types';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleCheck, CircleX } from 'lucide-react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 interface EditFormProps {
     celebrity: Celebrity;
     handleCancel: () => void;
 }
 
+const editSchema = z.object({
+    gender: z.string().min(1),
+    country: z.string().min(3, { message: 'Country is required' }).trim(),
+    description: z.string().min(4, { message: 'Description is required' }).trim()
+});
+
+type FormFields = z.infer<typeof editSchema>;
+
 export default function EditForm({ celebrity, handleCancel }: EditFormProps) {
     const {
         control,
         handleSubmit,
+        watch,
         formState: { errors }
-    } = useForm<Celebrity>({
+    } = useForm<FormFields>({
+        resolver: zodResolver(editSchema),
         defaultValues: celebrity
     });
 
     const { mutate: editMutation, isPending } = useEditCelebrity();
 
-    const onSubmit = async (data: Celebrity) => {
-        editMutation(data);
+    const onSubmit: SubmitHandler<FormFields | any> = async (data) => {
+        editMutation({ ...celebrity, ...data });
         handleCancel();
     };
+
+    const isDataChanged = watch('description') !== celebrity.description || watch('country') !== celebrity.country || watch('gender') !== celebrity.gender;
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className='p-0.5 space-y-4'>
@@ -88,7 +102,7 @@ export default function EditForm({ celebrity, handleCancel }: EditFormProps) {
                 <Button onClick={handleCancel} variant='ghost' type='button'>
                     <CircleX className=' text-red-500' />
                 </Button>
-                <Button type='submit' variant='ghost' disabled={isPending}>
+                <Button type='submit' variant='ghost' disabled={isPending || !isDataChanged}>
                     <CircleCheck className=' text-green-500' />
                 </Button>
             </div>

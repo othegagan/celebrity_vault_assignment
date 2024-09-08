@@ -31,12 +31,12 @@ export async function getCelebrities() {
     return sortedCelebrities;
 }
 
-export async function updateCelebrity(celebrity: Celebrity) {
+export async function updateCelebrity({ id, age, gender, country, description }: Celebrity) {
     const celebrities = await readJSONFile();
-    const index = celebrities.findIndex((c: { id: number }) => c.id === celebrity.id);
+    const index = celebrities.findIndex((c: { id: number }) => c.id === id);
 
     if (index !== -1) {
-        celebrities[index] = { ...celebrities[index], ...celebrity };
+        celebrities[index] = { ...celebrities[index], ...{ age, gender, country, description } };
         await writeJSONFile(celebrities);
         return celebrities[index];
     }
