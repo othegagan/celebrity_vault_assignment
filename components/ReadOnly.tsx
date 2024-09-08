@@ -1,5 +1,5 @@
 import { Label } from '@/components/ui/label';
-import { calculateAge } from '@/lib/helpers';
+import { calculateAge } from '@/lib/utils';
 import { Celebrity } from '@/types';
 
 export default function ReadOnly({ celebrity }: { celebrity: Celebrity }) {

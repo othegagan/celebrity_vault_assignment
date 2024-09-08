@@ -4,7 +4,7 @@ export const shimmer =
 export function CelebritySkeleton({ cardCount = 5 }: { cardCount?: number }) {
     return (
         <div className='flex flex-col gap-4'>
-            {[Array(cardCount).fill(null)].map((_, i) => (
+            {Array.from({ length: cardCount }, (_, i) => (
                 <div key={i} className={`h-16 rounded-md ${shimmer} bg-neutral-200 dark:bg-neutral-800`} />
             ))}
         </div>
