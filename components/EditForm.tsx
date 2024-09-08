@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { genderOptions } from '@/constants';
 import { useEditCelebrity } from '@/hooks/useFetchCelebrities';
-import { calculateAge } from '@/lib/helpers';
+import { calculateAge } from '@/lib/utils';
 import { Celebrity } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleCheck, CircleX } from 'lucide-react';
