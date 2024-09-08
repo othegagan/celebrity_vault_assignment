@@ -20,13 +20,13 @@ async function writeJSONFile(data: any) {
 export async function getCelebrities() {
     const celebrities = await readJSONFile();
 
-    // Sorting the celebrities by first name
-    const sortedCelebrities = celebrities.sort((a: { first: string }, b: { first: string }) => a.first.localeCompare(b.first));
-
     // Combine first and last name
-    sortedCelebrities.forEach((celebrity: { first: string; last: string; fullName?: string }) => {
+    celebrities.forEach((celebrity: { first: string; last: string; fullName?: string }) => {
         celebrity.fullName = `${celebrity.first} ${celebrity.last}`;
     });
+
+    // Sorting the celebrities by first name
+    const sortedCelebrities = celebrities.sort((a: { fullName: string }, b: { fullName: string }) => a.fullName.localeCompare(b.fullName));
 
     return sortedCelebrities;
 }
