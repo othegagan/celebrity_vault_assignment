@@ -8,4 +8,3 @@ export function calculateAge(dob: string) {
     }
     return age;
 }
-

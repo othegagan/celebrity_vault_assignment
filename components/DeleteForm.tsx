@@ -1,7 +1,7 @@
 'use client';
 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { deleteCelebrity } from '@/server/celebrities';
+import { useDeleteCelebrity } from '@/hooks/useFetchCelebrities';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from './ui/button';
@@ -9,20 +9,21 @@ import { Button } from './ui/button';
 export default function DeleteForm({ id, fullName }: { id: number; fullName: string }) {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
+    const { mutate: deleteCelebrity, isPending } = useDeleteCelebrity();
     const openDeleteDialog = () => {
         setDeleteDialogOpen(true);
     };
 
     const handleDelete = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const response = deleteCelebrity(id);
-        // setDeleteDialogOpen(false);
+        deleteCelebrity(id);
+        setDeleteDialogOpen(false);
     };
 
     return (
         <>
-            <Button onClick={openDeleteDialog} variant='outline' tooltip='Delete Celebrity'>
-                <Trash2 className='size-5' />
+            <Button onClick={openDeleteDialog} variant='ghost' tooltip='Delete Celebrity'>
+                <Trash2 className='size-5 text-red-500' />
             </Button>
 
             <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
@@ -37,7 +38,7 @@ export default function DeleteForm({ id, fullName }: { id: number; fullName: str
                         </Button>
 
                         <form onSubmit={handleDelete}>
-                            <Button type='submit' variant='destructive'>
+                            <Button type='submit' variant='destructive' disabled={isPending} loading={isPending}>
                                 Delete
                             </Button>
                         </form>

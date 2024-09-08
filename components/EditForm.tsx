@@ -6,69 +6,92 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { genderOptions } from '@/constants';
+import { useEditCelebrity } from '@/hooks/useFetchCelebrities';
 import { calculateAge } from '@/lib/helpers';
 import { Celebrity } from '@/types';
-import { Check, X } from 'lucide-react';
-import { useState } from 'react';
+import { CircleCheck, CircleX } from 'lucide-react';
+import { Controller, useForm } from 'react-hook-form';
 
-export default function EditForm({ celebrity, handleCancel }: { celebrity: Celebrity; handleCancel: () => void }) {
-    const [editedCelebrity, setEditedCelebrity] = useState<Celebrity | null>(null);
+interface EditFormProps {
+    celebrity: Celebrity;
+    handleCancel: () => void;
+}
 
-    const handleSave = () => {
-        if (editedCelebrity) {
+export default function EditForm({ celebrity, handleCancel }: EditFormProps) {
+    const {
+        control,
+        handleSubmit,
+        formState: { errors }
+    } = useForm<Celebrity>({
+        defaultValues: celebrity
+    });
 
-        }
+    const { mutate: editMutation, isPending } = useEditCelebrity();
+
+    const onSubmit = async (data: Celebrity) => {
+        editMutation(data);
+        handleCancel();
     };
 
     return (
-        <div className='p-0.5 space-y-4'>
-            <div className='grid grid-cols-3 gap-4 '>
+        <form onSubmit={handleSubmit(onSubmit)} className='p-0.5 space-y-4'>
+            <div className='grid grid-cols-3 gap-4'>
                 <div className='space-y-2'>
                     <Label className='text-muted-foreground'>Age</Label>
                     <Input type='number' value={calculateAge(celebrity?.dob || '')} readOnly className='mt-1' />
                 </div>
                 <div className='space-y-2'>
                     <Label>Gender</Label>
-                    <Select value={celebrity?.gender} onValueChange={(value) => setEditedCelebrity((prev) => (prev ? { ...prev, gender: value } : null))}>
-                        <SelectTrigger>
-                            <SelectValue placeholder='Select gender' />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {genderOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    <Controller
+                        name='gender'
+                        control={control}
+                        rules={{ required: 'Gender is required' }}
+                        render={({ field }) => (
+                            <Select onValueChange={field.onChange} value={field.value}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder='Select gender' />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {genderOptions.map((option) => (
+                                        <SelectItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        )}
+                    />
+                    {errors.gender && <span className='text-red-500'>{errors.gender.message}</span>}
                 </div>
                 <div>
                     <Label>Country</Label>
-                    <Input
-                        type='text'
-                        value={celebrity?.country}
-                        onChange={(e) => setEditedCelebrity((prev) => (prev ? { ...prev, country: e.target.value } : null))}
-                        className='mt-1'
+                    <Controller
+                        name='country'
+                        control={control}
+                        rules={{ required: 'Country is required' }}
+                        render={({ field }) => <Input {...field} className='mt-1' />}
                     />
+                    {errors.country && <span className='text-red-500'>{errors.country.message}</span>}
                 </div>
             </div>
             <div>
                 <Label>Description</Label>
-                <Textarea
-                    value={celebrity?.description}
-                    onChange={(e) => setEditedCelebrity((prev) => (prev ? { ...prev, description: e.target.value } : null))}
-                    className='mt-1'
-                    rows={7}
+                <Controller
+                    name='description'
+                    control={control}
+                    rules={{ required: 'Description is required' }}
+                    render={({ field }) => <Textarea {...field} className='mt-1' rows={7} />}
                 />
+                {errors.description && <span className='text-red-500'>{errors.description.message}</span>}
             </div>
-            <div className=' flex justify-end space-x-2'>
-                <Button onClick={handleCancel} variant='outline'>
-                    <X className='mr-2 h-4 w-4' /> Cancel
+            <div className='flex justify-end space-x-2'>
+                <Button onClick={handleCancel} variant='ghost' type='button'>
+                    <CircleX className=' text-red-500' />
                 </Button>
-                <Button onClick={handleSave}>
-                    <Check className='mr-2 h-4 w-4' /> Save
+                <Button type='submit' variant='ghost' disabled={isPending}>
+                    <CircleCheck className=' text-green-500' />
                 </Button>
             </div>
-        </div>
+        </form>
     );
 }

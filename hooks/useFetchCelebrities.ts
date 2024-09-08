@@ -1,26 +1,31 @@
-import { getCelebrities } from '@/server/celebrities';
+import { deleteCelebrity, getCelebrities, updateCelebrity } from '@/server/celebrities';
 import { Celebrity } from '@/types';
-import { useState, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export const useFetchCelebrities = () => {
-    const [celebrities, setCelebrities] = useState<Celebrity[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+export function useFetchCelebrities() {
+    return useQuery({
+        queryKey: ['celebrities'],
+        queryFn: () => getCelebrities()
+    });
+}
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await getCelebrities();
-                setCelebrities(data);
-            } catch (err) {
-                setError((err as Error).message);
-            } finally {
-                setLoading(false);
-            }
-        };
+export function useDeleteCelebrity() {
+    const queryClient = useQueryClient();
 
-        fetchData();
-    }, []);
+    return useMutation({
+        mutationFn: async (id: number) => await deleteCelebrity(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['celebrities'] });
+        }
+    });
+}
 
-    return { celebrities, setCelebrities, loading, error };
-};
+export function useEditCelebrity() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (data: Celebrity) => await updateCelebrity(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['celebrities'] });
+        }
+    });
+}
