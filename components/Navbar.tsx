@@ -1,6 +1,7 @@
 import { Vault } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import ThemeToggle from './ui/theme-toggle';
+const ThemeToggle = dynamic(() => import('./ui/theme-toggle'), { ssr: false });
 
 export default function Navbar() {
     return (
