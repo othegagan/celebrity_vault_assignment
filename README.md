@@ -10,12 +10,12 @@ Simple celebrity system that allows you to view, edit, and delete celebrities. I
 -   React Hook Form : For form validation
 -   TanStack Query: For data fetching and caching
 
-## Features
+## Key Features 🔥
 
--   View, edit, and delete celebrities
--   Search for celebrities by name
--   Dark mode support
--   Mobile responsiveness
+-   💫 View, edit, and delete celebrities
+-   🔍 Search for celebrities by name
+-   🌓 Adaptive Light and Dark Modes
+-   📱Mobile responsiveness
 
 ## Getting Started
 
@@ -40,3 +40,11 @@ npm run dev   or  pnpm dev
 ```
 
 4. Open your browser and navigate to `http://localhost:3000`.
+
+<hr/>
+<div align="center">
+    <h5 align="center">💫  Developed with ❤️ by <a href="https://thegagan-portfolio.vercel.app/">Gagan Kumar</a>  </h5>
+    <p align="center"> Don't be shy to contact 📫 <a href="mailto:example@gmail.com">hellothegagan@gmail.com</a>
+ <br>
+     🤙 <a herf="tel:+919036644552">+919036644552 </a>
+</div>
