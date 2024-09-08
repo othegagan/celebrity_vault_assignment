@@ -3,11 +3,12 @@
 import DeleteForm from '@/components/DeleteForm';
 import EditForm from '@/components/EditForm';
 import ReadOnly from '@/components/ReadOnly';
+import { CelebritySkeleton } from '@/components/Skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import DebouncedInput from '@/components/ui/debounce-input';
 import { useFetchCelebrities } from '@/hooks/useFetchCelebrities';
-import { calculateAge } from '@/lib/helpers';
+import { calculateAge } from '@/lib/utils';
 import { Celebrity } from '@/types';
 import { Pencil } from 'lucide-react';
 import { useState } from 'react';
@@ -43,7 +44,9 @@ export default function CelebrityList() {
         <div className='container mx-auto p-4'>
             <div className='max-w-2xl mx-auto space-y-5'>
                 <DebouncedInput type='text' placeholder='Search Celebrity' value={searchTerm} onChange={handleSearch} className='mb-4' />
-                {isFetching && <p>Loading...</p>}
+
+                {isFetching && <CelebritySkeleton cardCount={8} />}
+
                 {error && <p>Error: {error.message}</p>}
 
                 {!isFetching && !error && filteredCelebrities.length === 0 && <div className='text-center'>No celebrities found</div>}
