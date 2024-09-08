@@ -3,10 +3,9 @@
 // All these operations simulate a database call
 
 import { promises as fs } from 'fs';
-import path from 'node:path';
 import { Celebrity } from '@/types';
 
-const filePath = path.join(process.cwd(), 'data', 'celebrities.json');
+const filePath = `${process.cwd()}/app/celebrities.json`;
 
 async function readJSONFile() {
     const fileContents = await fs.readFile(filePath, 'utf8');
@@ -14,7 +13,7 @@ async function readJSONFile() {
 }
 
 async function writeJSONFile(data: any) {
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
+    await fs.writeFile(filePath, JSON.stringify(data, null, 4), 'utf8');
 }
 
 export async function getCelebrities() {
