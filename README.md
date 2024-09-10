@@ -39,7 +39,23 @@ npm install   or  pnpm install
 npm run dev   or  pnpm dev
 ```
 
-4. Open your browser and navigate to `http://localhost:3000`.
+4. Go to mongodb atlas and create a new cluster and database.
+   Copy the URI and paste it in the .env.local file.
+   An example URI is given below:
+
+    ```bash
+    MONGODB_URI="mongodb+srv://<username>:<password>@<collection>.yjq3oco.mongodb.net/celebrity_vault?retryWrites=true&w=majority"
+
+    ```
+
+5. Open your browser and navigate to `http://localhost:3000`.
+
+6. Additionally, Added few endpoints to the API:
+
+-   POST `/api/celebrities`
+-   GET `/api/celebrities`
+-   DELETE `/api/celebrities?celebrityId=1`
+-   PUT `/api/celebrities`
 
 <hr/>
 <div align="center">
