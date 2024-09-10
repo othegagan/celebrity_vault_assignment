@@ -1,6 +1,7 @@
 'use server';
 
 import connectDB from '@/lib/mongodb';
+import { JSONparsefy } from '@/lib/utils';
 import CelebrityModel from '@/models/celebrity.model';
 import { Celebrity } from '@/types';
 
@@ -18,7 +19,8 @@ export async function getCelebrities() {
         }));
 
         // Sort celebrities by fullName
-        return modifiedCelebritiesData.sort((a, b) => a.fullName.localeCompare(b.fullName));
+        const sortedCelebrities = modifiedCelebritiesData.sort((a, b) => a.fullName.localeCompare(b.fullName));
+        return JSONparsefy(sortedCelebrities);
     } catch (error: unknown) {
         console.error('Failed to fetch celebrities:', error);
         throw new Error(`Failed to fetch celebrities : ${error}`);
@@ -33,9 +35,7 @@ export async function updateCelebrity({ id, gender, country, description }: Part
             throw new Error('Celebrity not found');
         }
 
-        return {
-            ...updatedCelebrity
-        };
+        return JSONparsefy(updatedCelebrity);
     } catch (error: unknown) {
         console.error('Failed to update celebrity:', error);
         throw new Error(`Failed to update celebrity :${error}`);

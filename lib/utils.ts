@@ -19,3 +19,7 @@ export function calculateAge(dob: string) {
 export function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+export function JSONparsefy(obj: any) {
+    return JSON.parse(JSON.stringify(obj));
+}
