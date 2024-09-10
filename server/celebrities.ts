@@ -1,56 +1,74 @@
 'use server';
 
-// All these operations simulate a database call
-
-import { promises as fs } from 'fs';
+import connectDB from '@/lib/mongodb';
+import CelebrityModel from '@/models/celebrity.model';
 import { Celebrity } from '@/types';
 
-const filePath = `${process.cwd()}/app/celebrities.json`;
-
-async function readJSONFile() {
-    const fileContents = await fs.readFile(filePath, 'utf8');
-    return JSON.parse(fileContents);
-}
-
-async function writeJSONFile(data: any) {
-    await fs.writeFile(filePath, JSON.stringify(data, null, 4), 'utf8');
-}
+// Ensure database connection
+connectDB();
 
 export async function getCelebrities() {
-    const celebrities = await readJSONFile();
+    try {
+        const celebrities = await CelebrityModel.find({}).lean();
 
-    // Combine first and last name
-    celebrities.forEach((celebrity: { first: string; last: string; fullName?: string }) => {
-        celebrity.fullName = `${celebrity.first} ${celebrity.last}`;
-    });
+        // combine first and last to make fullName field
+        const modifiedCelebritiesData = celebrities.map((celebrity) => ({
+            ...celebrity,
+            fullName: `${celebrity.first} ${celebrity.last}`
+        }));
 
-    // Sorting the celebrities by first name
-    const sortedCelebrities = celebrities.sort((a: { fullName: string }, b: { fullName: string }) => a.fullName.localeCompare(b.fullName));
-
-    return sortedCelebrities;
+        // Sort celebrities by fullName
+        return modifiedCelebritiesData.sort((a, b) => a.fullName.localeCompare(b.fullName));
+    } catch (error: unknown) {
+        console.error('Failed to fetch celebrities:', error);
+        throw new Error(`Failed to fetch celebrities : ${error}`);
+    }
 }
 
-export async function updateCelebrity({ id, age, gender, country, description }: Celebrity) {
-    const celebrities = await readJSONFile();
-    const index = celebrities.findIndex((c: { id: number }) => c.id === id);
+export async function updateCelebrity({ id, gender, country, description }: Partial<Celebrity>) {
+    try {
+        const updatedCelebrity = await CelebrityModel.findOneAndUpdate({ id: id }, { gender, country, description }, { new: true, runValidators: true }).lean();
 
-    if (index !== -1) {
-        celebrities[index] = { ...celebrities[index], ...{ age, gender, country, description } };
-        await writeJSONFile(celebrities);
-        return celebrities[index];
+        if (!updatedCelebrity) {
+            throw new Error('Celebrity not found');
+        }
+
+        return {
+            ...updatedCelebrity
+        };
+    } catch (error: unknown) {
+        console.error('Failed to update celebrity:', error);
+        throw new Error(`Failed to update celebrity :${error}`);
     }
-
-    throw new Error('Celebrity not found');
 }
 
 export async function deleteCelebrity(id: number) {
-    const celebrities = await readJSONFile();
-    const updatedCelebrities = celebrities.filter((c: { id: number }) => c.id !== id);
+    try {
+        const deletedCelebrity = await CelebrityModel.findOneAndDelete({ id: id });
 
-    if (updatedCelebrities.length < celebrities.length) {
-        await writeJSONFile(updatedCelebrities);
-        return updatedCelebrities;
+        if (!deletedCelebrity) {
+            throw new Error('Celebrity not found');
+        }
+
+        return getCelebrities();
+    } catch (error: unknown) {
+        console.error('Failed to delete celebrity:', error);
+        throw new Error(`Failed to delete celebrity : ${error}`);
     }
+}
 
-    throw new Error('Celebrity not found');
+export async function createCelebrity(celebrityData: any[]) {
+    try {
+        if (Array.isArray(celebrityData)) {
+            const insertedCelebrities = await CelebrityModel.insertMany(celebrityData);
+            // console.log(`${insertedCelebrities.length} logs inserted successfully.`);
+            return insertedCelebrities;
+        }
+
+        const insertedCelebrity = await CelebrityModel.create(celebrityData);
+        return insertedCelebrity;
+    } catch (error: unknown) {
+        console.error('Failed to create celebrity:', error);
+        throw new Error(`Failed to create celebrity : ${error}`);
+    }
 }

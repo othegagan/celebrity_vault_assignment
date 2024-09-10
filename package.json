@@ -26,6 +26,8 @@
         "clsx": "^2.1.1",
         "fs": "0.0.1-security",
         "lucide-react": "^0.439.0",
+        "mongodb": "^6.8.1",
+        "mongoose": "^8.6.1",
         "next": "14.2.8",
         "next-themes": "^0.3.0",
         "react": "^18",
